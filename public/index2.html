@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>Telangana Pahani</title>
+  <script src="js/d3.v3.min.js"></script>
+  <script src='js/crossfilter.js' type='text/javascript'></script>
+  <script src='js/dc.min.js' type='text/javascript'></script>
+  <script src='js/jquery.min.js' type='text/javascript'></script>
+  <script src='js/bootstrap.min.js' type='text/javascript'></script>
+
+  <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+  <link href='css/dc.css' rel='stylesheet' type='text/css'>
+
+  <style type="text/css"></style>
+</head>
+
+<body>
+
+<div class='container' style='font: 12px sans-serif;'>
+    <div class='row'>
+        <div class='span4' id='dc-dist-chart'>
+            <h4>Filter Districts</h4>
+        </div>
+        <div class='span4' id='dc-mdl-chart'>
+            <h4>Filter Mandals</h4>
+        </div>   
+        <div class='span4' id='dc-pie-chart'>
+            <h4>Blank 2</h4>
+        </div> 
+    </div>
+    <div class='row'>
+        <div class='span6' id='dc-tax-chart'>
+            <h4>Dist wise Tax</h4>
+        </div>
+        <div class='span6' id='dc-taxmdl-chart'>
+            <h4>Mandal wise Tax</h4>
+        </div>   
+    </div>
+   <div class='row'>
+	<div class='span12'>
+      <table class='table table-hover' id='dc-table-graph'>
+        <thead>
+          <tr class='header'>
+            <th>District Name</th>
+            <th>Mandal Name</th>
+            <th>Village Name</th>
+            <th>Tax</th>
+            <th>Cultivated</th>
+            <th>Non Cultivated</th>
+          </tr>
+        </thead>
+      </table>
+	</div>
+  </div>
+</div>
+  
+<script>
+  var dataTable = dc.dataTable("#dc-table-graph");
+  var taxChart = dc.barChart("#dc-tax-chart");
+  var taxMdlChart = dc.barChart("#dc-taxmdl-chart");
+  var distChart = dc.rowChart("#dc-dist-chart");
+  var mdlChart = dc.rowChart("#dc-mdl-chart");
+  var culChart = dc.pieChart("#dc-pie-chart");
+  
+  d3.csv("data/sample1.csv", function (data) {
+
+  data.forEach(function(d) { 
+    d.dist   = +d.DistrictID;
+    d.mdl   = +d.MandalID;
+    d.vl   = +d.VillageID;
+    d.sno = +d.SurveyNO;
+    d.tax   = +d.Tax;
+    d.cult  = +d.Cultivated;
+    d.ncult   = +d.NonCultivated;
+    d.dname = d.DistName;
+  });
+
+  // Run the data through crossfilter and load our 'facts'
+  var facts = crossfilter(data);
+
+  // Create dataTable dimension
+  var surveyNoDimension = facts.dimension(function (d) {
+    return d.sno;
+  });
+  
+  var taxDistValue = facts.dimension(function (d) {
+    return d.dist;
+  });
+  var taxDistValueGroupCount = taxDistValue.group()
+    .reduceSum(function(d) { return d.tax; })
+    
+  var taxMdlValue = facts.dimension(function (d) {
+    return d.mdl;
+  });
+  var taxMdlValueGroupCount = taxMdlValue.group()
+    .reduceSum(function(d) { return d.tax; })
+    
+   
+  var nameOfDist = facts.dimension(function (d) {
+    var dist = d.dist;
+    switch (dist) {
+      case 1:
+        return "1. ఇబ్రహీంపట్నం";
+      case 2:
+        return "2. మెదక్";
+      case 3:
+        return "3. 	మహబూబ్ నగర్";
+    }
+  }); 
+  
+   var nameOfDistGroup = nameOfDist.group();
+  
+  var nameOfMdl = facts.dimension(function (d) {
+    return '# '+d.mdl;
+  });
+  
+  var nameOfMdlGroup = nameOfMdl.group();
+  
+  
+  
+   var isCult = facts.dimension(function (d) {
+    if (d.lat <= -40.555907 && d.long <= 174.590607)
+      return "South";
+    else
+      return "North";
+    });
+    
+  
+  // Setup the charts
+   // row chart day of week
+  
+   
+  distChart.width(300)
+    .height(220)
+    .margins({top: 5, left: 10, right: 10, bottom: 20})
+    .dimension(nameOfDist)
+    .group(nameOfDistGroup)
+    .colors(d3.scale.category10())
+    .label(function (d){
+       return d.key.split(".")[1];
+    })
+    .title(function(d){return d.value;})
+    .elasticX(true)
+    .xAxis().ticks(4);
+   
+   mdlChart.width(300)
+    .height(220)
+    .margins({top: 5, left: 10, right: 10, bottom: 20})
+    .dimension(nameOfMdl)
+    .group(nameOfMdlGroup)
+    .colors(d3.scale.category10())
+    .label(function (d){
+       return d.key.split(".")[1];
+    })
+    .title(function(d){return d.value;})
+    .elasticX(true)
+    .xAxis().ticks(4);
+  
+   taxChart.width(480)
+    .height(150)
+    .margins({top: 10, right: 10, bottom: 20, left: 40})
+    .dimension(taxDistValue)
+    .group(taxDistValueGroupCount)
+    .transitionDuration(500)
+    .centerBar(true)	
+    .gap(10)
+    .x(d3.scale.linear().domain([0,10]))
+    .elasticY(true)
+    .xAxis().tickFormat();	
+    
+    taxMdlChart.width(480)
+    .height(150)
+    .margins({top: 10, right: 10, bottom: 20, left: 40})
+    .dimension(taxMdlValue)
+    .group(taxMdlValueGroupCount)
+    .transitionDuration(500)
+    .centerBar(true)	
+    .gap(10)
+    .x(d3.scale.linear().domain([0,10]))
+    .elasticY(true)
+    .xAxis().tickFormat();	
+  
+   
+  // Table of earthquake data
+  dataTable.width(960).height(800)
+    .dimension(surveyNoDimension)
+	.group(function(d) { return "Land Pahani"
+	 })
+	.size(10)
+    .columns([
+      function(d) { return d.dist; },
+      function(d) { return d.mdl; },
+      function(d) { return d.vl; },
+      function(d) { return d.tax; },
+      function(d) { return d.cult; },
+      function(d) { 
+          return d.ncult},
+    ])
+    .sortBy(function(d){ return d.sno; })
+    .order(d3.ascending);
+
+  // Render the Charts
+  dc.renderAll();
+  
+});
+
+</script>
+    
+</body>
+</html>

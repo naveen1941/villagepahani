@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>Telangana Pahani</title>
+  <script src="js/d3.v3.min.js"></script>
+  <script src='js/crossfilter.js' type='text/javascript'></script>
+  <script src='js/dc.min.js' type='text/javascript'></script>
+  <script src='js/jquery.min.js' type='text/javascript'></script>
+  <script src='js/bootstrap.min.js' type='text/javascript'></script>
+
+  <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+  <link href='css/dc.css' rel='stylesheet' type='text/css'>
+  <link href='css/style.css' rel='stylesheet' type='text/css'>
+
+  <style type="text/css"></style>
+  <style>
+      
+  </style>
+</head>
+
+<body>
+
+<div class='container' style='font: 12px sans-serif;'>
+    
+    <div class='row'>
+        <h1 style="color:black;"> జిల్లా:మెదక్ &nbsp&nbsp > &nbsp&nbsp	మండలం:కంగ్టి &nbsp&nbsp > &nbsp&nbsp	గ్రామము పేరు :కంగ్టి </h1> 
+    </div>
+    
+    <div class='row'style="display: -webkit-box;">
+        <div class='span4' id='dc-total-tile'>
+            <h4>మొత్తం భూమి</h4>
+            <div class="keep-center">
+                <h3 id='total'></h3>
+            </div> 
+        </div>
+        <div class='span4' id='dc-cult-tile'>
+            <h4> సాగుకు పనికి వచ్చు విస్తీర్ణం </h4>
+            <div class="keep-center">
+                <h3 id='cult'></h3>
+            </div>    
+        </div>   
+        <div class='span4' id='dc-ncult-tile'>
+            <h4>సాగుకు పనికి రాని విస్తీర్ణం</h4>
+            <div class="keep-center">
+                <h3 id='ncult'> </h3>
+            </div> 
+        </div>  
+    </div>
+    
+    <div class='row'style="display: -webkit-box;">
+        <div class='span4' id='dc-avg-tile'>
+            <h4>వ్యక్తి సగటు భూమి </h4>
+            <div class="keep-center">
+                <h3 id='avg'></h3>
+            </div> 
+        </div>
+        <div class='span4' id='dc-high-tile'>
+            <h4> అధిక భూమి </h4>
+            <div class="keep-center">
+                <h3 id='high'></h3>
+            </div>    
+        </div>   
+        <div class='span4' id='dc-low-tile'>
+            <h4>తక్కువ భూమి</h4>
+            <div class="keep-center">
+                <h3 id='low'> </h3>
+            </div> 
+        </div>  
+    </div>
+    
+    <div class='row'>
+        <div class='span4' id='dc-type-chart'>
+            <h4>భూమి స్వభావం</h4>
+        </div>
+        <div class='span4' id='dc-detail-chart'>
+            <h4>భూమి వివరణ</h4>
+        </div>   
+        <div class='span4' id='dc-water-chart'>
+            <h4>జలాధారము</h4>
+        </div>  
+    </div>
+    
+    <div class='row'>
+        <div class='span12'>
+        <table class='table table-hover' id='dc-table-graph'>
+            <thead>
+            <tr class='header'>
+                <th>సర్వే నెం</th>
+                <th>సాగుకు పనికి వచ్చు విస్తీర్ణం</th>
+                <th>సాగుకు పనికి రాని విస్తీర్ణం</th>
+                <th>భూమి స్వభావం</th>
+                <th>భూమి వివరణ</th>
+                <th>జలాధారము</th>
+            </tr>
+            </thead>
+        </table>
+        </div>
+  </div>
+  
+</div>
+  
+<script>
+    
+   var width = 370;
+   var width1 = 370;
+   
+  var dataTable = dc.dataTable("#dc-table-graph");
+  var typePie = dc.pieChart("#dc-type-chart");
+  var detailPie = dc.pieChart("#dc-detail-chart");
+  var waterPie = dc.pieChart("#dc-water-chart");
+  var cultBar = dc.pieChart("#dc-cult-chart");
+  
+  d3.csv("data/sample3.csv", function (data) {
+      
+    $("#dc-total-tile").css("width", width);
+    $("#dc-total-tile").css("height", 150);
+    $("#dc-total-tile").css("margin", 10);
+    $("#dc-total-tile").css('background-color', 'rgb(31, 119, 180)');
+    $("#dc-total-tile").css('border-color', '#0000FF');
+    $("#dc-total-tile").css('color', 'white !important');
+    
+    $("#dc-cult-tile").css("width", width);
+    $("#dc-cult-tile").css("height", 150);
+    $("#dc-cult-tile").css("margin", 10);
+    $("#dc-cult-tile").css('background-color', 'rgb(44, 160, 44)');
+    $("#dc-cult-tile").css('border-color', '#0000FF');
+    
+    $("#dc-ncult-tile").css("width", width);
+    $("#dc-ncult-tile").css("height", 150);
+    $("#dc-ncult-tile").css("margin", 10);
+    $("#dc-ncult-tile").css('background-color', 'rgb(255, 127, 14)');
+    $("#dc-ncult-tile").css('border-color', '#0000FF');
+    
+    $("#dc-avg-tile").css("width", width);
+    $("#dc-avg-tile").css("height", 150);
+    $("#dc-avg-tile").css("margin", 10);
+    $("#dc-avg-tile").css('background-color', 'rgb(227, 119, 194)');
+    $("#dc-avg-tile").css('border-color', '#0000FF');
+    
+    $("#dc-high-tile").css("width", width);
+    $("#dc-high-tile").css("height", 150);
+    $("#dc-high-tile").css("margin", 10);
+    $("#dc-high-tile").css('background-color', 'rgb(140, 86, 75)');
+    $("#dc-high-tile").css('border-color', '#0000FF');
+    
+    $("#dc-low-tile").css("width", width);
+    $("#dc-low-tile").css("height", 150);
+    $("#dc-low-tile").css("margin", 10);
+    $("#dc-low-tile").css('background-color', 'rgb(188, 189, 34)');
+    $("#dc-low-tile").css('border-color', '#0000FF');
+
+  data.forEach(function(d) { 
+    d.sno   = +d.survey_no;
+    d.cult   = +d.cultivable;
+    d.ncult   = +d.ncultivable;
+    d.type = +d.type;
+    d.detail   = +d.detail;
+    d.ws  = +d.water_source;
+    d.total  = +d.total;
+  });
+
+  // Run the data through crossfilter and load our 'facts'
+  var facts = crossfilter(data);
+
+  var surveyNoDimension = facts.dimension(function (d) {
+    return d.sno;
+  });
+  
+  var cultivated = facts.dimension(function(d) { return d; }),
+     cultTotal = cultivated.group().reduceSum(function(d) { return d.cult; });
+    topTypes = cultTotal.top(1);
+    $("#cult").append(Math.round(topTypes[0].value) + ' ఏకర్స్');
+    
+     var ncultivated = facts.dimension(function(d) { return d; }),
+     ncultTotal = ncultivated.group().reduceSum(function(d) { return d.ncult; });
+    ntopTypes = ncultTotal.top(1);
+    $("#ncult").append(Math.round(ntopTypes[0].value) + ' ఏకర్స్');
+    
+    var total_land = (Math.round(topTypes[0].value) + Math.round(ntopTypes[0].value));
+    $("#total").append(total_land + ' ఏకర్స్');
+    
+    var sno = facts.dimension(function(d) { return d; }),
+    sno1 = sno.group().reduceSum(function(d) { return d.sno; });
+    sno2 = sno1.top(1);
+    
+    var avgl = total_land / sno2[0].value;
+    
+    
+     $("#avg").append(Math.round(avgl * 10000) / 10000 + ' ఏకర్స్');
+     
+     var areaTotal = facts.dimension(function(d) { return d.total; });
+     var topArea = areaTotal.top(1);     
+     $("#high").append(Math.round(topArea[0].total * 10000) / 10000 + ' ఏకర్స్,    ' + topArea[0].name);
+    
+     var bottomArea = areaTotal.bottom(1);     
+     $("#low").append(Math.round(bottomArea[0].total * 10000) / 10000 + ' ఏకర్స్,    ' + bottomArea[0].name);
+    
+    
+   var isDetail = facts.dimension(function (d) {
+        switch (d.detail) {
+        case 1:
+            return "1";
+        case 2:
+            return "2";
+        case 3:
+            return "3";
+        case 4:
+            return "4";
+        }
+    });
+    
+     var isDetailGroup = isDetail.group();
+     
+     var isType = facts.dimension(function (d) {
+        switch (d.type) {
+        case 1:
+            return "1";
+        case 2:
+            return "2";
+        case 3:
+            return "3";
+        case 4:
+            return "4";
+        }
+    });
+    
+    
+    
+     var isTypeGroup = isType.group();
+     
+     
+     var isWater = facts.dimension(function (d) {
+        switch (d.ws) {
+        case 1:
+            return "1";
+        case 2:
+            return "2";
+        case 3:
+            return "3";
+        case 4:
+            return "4";
+        }
+    });
+    
+     var isWaterGroup = isWater.group();
+    
+  
+  typePie.width(width1)
+    .height(220)
+    .radius(100)
+    .innerRadius(30)
+    .dimension(isType)
+    .group(isTypeGroup)
+    .title(function(d){
+        switch (d.data.key) {
+        case "1":
+            return "పట్టా  ";
+        case "2":
+            return "ప్రభుత్వము ";
+        case "3":
+            return "సిలిగ్ ";
+        case "4":
+            return "చౌతా ఇనాం ";
+        case "5":
+            return "మాఫీ ఇనాం ";
+        }
+    })
+    .label(function(d){
+        switch (d.data.key) {
+         case "1":
+            return "పట్టా  ";
+        case "2":
+            return "ప్రభుత్వము ";
+        case "3":
+            return "సిలిగ్ ";
+        case "4":
+            return "చౌతా ఇనాం ";
+        case "5":
+            return "మాఫీ ఇనాం ";
+        }
+    });
+    
+    
+    detailPie.width(width1)
+    .height(220)
+    .radius(100)
+    .innerRadius(30)
+    .dimension(isDetail)
+    .group(isDetailGroup)
+    .title(function(d){
+        switch (d.data.key) {
+        case "1":
+            return "ఖుష్కి  ";
+        case "2":
+            return "మెట్ట ";
+        }
+    })
+    .label(function(d){
+        switch (d.data.key) {
+        case "1":
+            return "ఖుష్కి  ";
+        case "2":
+            return "మెట్ట ";
+        }
+    });
+    
+    waterPie.width(width1)
+    .height(220)
+    .radius(100)
+    .innerRadius(30)
+    .dimension(isWater)
+    .group(isWaterGroup)
+    .title(function(d){
+        switch (d.data.key) {
+        case "1":
+            return "వర్షము ";
+        case "2":
+            return "బావి ";
+        case "3":
+            return "బొరు ";
+        }
+    })
+    .label(function(d){
+        switch (d.data.key) {
+        case "1":
+            return "వర్షము ";
+        case "2":
+            return "బావి ";
+        case "3":
+            return "బొరు ";
+        }
+    });
+    
+    
+  
+   
+  // Table of earthquake data
+  dataTable.width(960).height(800)
+    .dimension(surveyNoDimension)
+	.group(function(d) { return "Village Pahani"
+	 })
+	.size(10)
+    .columns([
+      function(d) { return d.sno; },
+      function(d) { return d.cult; },
+      function(d) { return d.ncult; },
+      function(d) { 
+           switch (d.type) {
+        case 1:
+            return "పట్టా  ";
+        case 2:
+            return "ప్రభుత్వము ";
+        case 3:
+            return "సిలిగ్ ";
+        case 4:
+            return "చౌతా ఇనాం ";
+        case 5:
+            return "మాఫీ ఇనాం ";
+        }
+        },
+      function(d) { 
+          switch (d.detail) {
+        case 1:
+            return "ఖుష్కి  ";
+        case 2:
+            return "మెట్ట ";
+        } 
+        },
+      function(d) { 
+          switch (d.ws) {
+        case 1:
+            return "వర్షము ";
+        case 2:
+            return "బావి ";
+        case 3:
+            return "బొరు ";
+        }},
+    ])
+    .sortBy(function(d){ return d.sno; })
+    .order(d3.ascending);
+
+  dc.renderAll();
+});
+  
+
+</script>
+    
+</body>
+</html>
