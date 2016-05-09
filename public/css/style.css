@@ -23,3 +23,8 @@ h3{
 #dc-total-tile h1,h2,h3,h4,h5{
   color: white;
 }
+
+#type, #water_s, #detail{
+  color: black !important;
+  font-size: 30px !important;
+}
