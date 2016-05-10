@@ -9,3 +9,6 @@ To run the app:
 4. run "npm install"
 5. run "npm start"
 6. launch "http://localhost:3000/"
+7. 
+
+Live : https://young-hamlet-85910.herokuapp.com/
